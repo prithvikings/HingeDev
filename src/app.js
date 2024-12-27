@@ -9,7 +9,7 @@ app.get('/',(req,res)=>{
 app.use("/user",(req,res)=>{
     res.send('User page is created');
     res.end();
-
+    
 })
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
