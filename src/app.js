@@ -29,10 +29,28 @@ app.delete('/',(req,res)=>{
 })
 
 //use will handle all type of request like get,post,put,delete etc
-app.use("/user",(req,res)=>{
-    res.send('User page is created');
-    res.end();
-})
+app.use("/user",(req,res,next)=>{
+        console.log('User page is created console printing');
+        res.send('User page is created');
+        next();
+    },
+    (req,res,next)=>{
+        console.log('User page 2 is created console printing');
+        res.send('User page 2 is created');
+        next();
+    },
+    (req,res,next)=>{
+        console.log('User page 3 is created console printing');
+        res.send('User page 3 is created');
+        next();
+    },
+    (req,res,next)=>{
+        console.log('User page 4 is created console printing');
+        res.send('User page 4 is created');
+    }
+)
+
+
 
 app.use("/admin",(req,res)=>{
     res.send('Admin page is created');
