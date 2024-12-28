@@ -77,8 +77,15 @@ app.use("/profile/getdata",profileauth,(req,res,next)=>{
     res.send('Profile data fetch');
 })
 
+// Catch-all for 404 errors (page not found)
 app.use((req, res) => {
-    res.status(404).send('Page not found');
+    res.status(404).send('Page not found. Sorry!');
+});
+
+// General error handler (500 internal server errors)
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something went wrong");
 });
 
 
