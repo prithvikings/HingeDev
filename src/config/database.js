@@ -5,10 +5,4 @@ const connectdb=async()=>{
     );
 };
 
-connectdb()
-.then(()=>{
-    console.log("connected to database");
-})
-.catch(err=>{
-    console.log(err);
-})
+module.exports={connectdb};
