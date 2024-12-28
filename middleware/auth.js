@@ -1,14 +1,30 @@
 const authentication = (req, res, next) => {
+    console.log(`Authenticating route: ${req.originalUrl}`);
     const token = "xyz";
-    const auth = "xyzhbv";
+    const isAuth = token === 'xyz';
 
-    if (token === auth) {
-        console.log('You are authorized');
-        next(); // Pass control to the next middleware or route handler
-    } else {
+    if (!isAuth) {
         console.log('You are not authorized');
-        res.status(403).send('Access denied'); // Send an error response and do not call `next()`
+        return res.status(401).json({ message: 'Authentication failed' });
+    } else {
+        console.log('You are authorized');
+        next();
     }
 };
 
-module.exports = {authentication};
+
+const profileauth=(req,res,next)=>{
+    console.log(`Authenticating route: ${req.originalUrl}`);
+    const token="abc";
+    const isProfile=token==='abch';
+    if(!isProfile){
+        console.log('You are not authorized to view this profile');
+        return res.status(401).json({message:'Profile authentication failed'});
+    }else{
+        console.log('You are authorized to view this profile');
+        next();
+    }
+}
+module.exports = {authentication, profileauth};
+
+
