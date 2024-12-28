@@ -1,6 +1,7 @@
 const express=require('express');
 const app=express();
 const port=3000;
+const {authentication} = require('../middleware/auth');
 
 
 
@@ -27,6 +28,14 @@ app.delete('/',(req,res)=>{
     res.send('Delete the data');
     res.end();
 })
+
+app.use("/admin",authentication);
+
+app.use("/admin",(req,res)=>{
+    console.log('Admin page  is created console printing');
+    res.send('Admin page  is created');
+});
+
 
 //use will handle all type of request like get,post,put,delete etc
 app.use("/user",(req,res,next)=>{
