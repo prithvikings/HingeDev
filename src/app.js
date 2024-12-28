@@ -1,8 +1,8 @@
 const express=require('express');
 const app=express();
 const port=3000;
-const {authentication} = require('../middleware/auth');
-const {profileauth} = require('../middleware/auth');
+const {authentication} = require('./middleware/auth');
+const {profileauth} = require('./middleware/auth');
 
 
 //use will handle all type of request like get,post,put,delete etc other will not handle because its order is first
