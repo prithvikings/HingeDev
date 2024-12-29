@@ -61,7 +61,12 @@ app.delete("/usersdelete",async(req,res)=>{
     try{
         const firstName=req.body.firstName;
         const deletedUser=await User.deleteOne({firstName:firstName});
-        res.send("User deleted successfully");
+        if(deletedUser.deletedCount==0){
+            res.send("No user found");
+        }
+        else{
+            res.send(`User deleted successfull ${deletedUser.acknowledged}`);
+        }
     }
     catch(err){
         console.log(err);
