@@ -23,6 +23,22 @@ app.post("/signup",async (req,res)=>{
     
 });
 
+app.get("/users", async(req,res)=>{
+    try{
+        const userEmail=req.body.email;
+        const users=await User.find({email:userEmail});
+        if(users.length==0){
+            res.send("No user found");
+        }else{
+            res.send(users);
+        }
+    }catch(err){
+        console.log(err);
+        res.status(400).send("Failed to fetch users");
+    }
+})
+
+
 connectdb()
 .then(()=>{
     console.log("connected to database");
