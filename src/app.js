@@ -56,6 +56,38 @@ app.get("/feed",async(req,res)=>{
     }
 })
 
+//for updating the data from the server
+app.patch("/usersupdate", async (req, res) => {
+    try {
+        const userEmail = req.body.email;
+        
+        if(!userEmail){
+            return res.status(400).send("Email is required");
+        }
+
+        // Update user data
+        const updatedUser = await User.updateOne(
+            { email: userEmail },
+            { $set: req.body }
+        );
+
+        // Check if a user was matched
+        if (updatedUser.matchedCount === 0) {
+            return res.status(404).send("No user found with the provided email");
+        }
+
+        // Check if user data was actually modified
+        if (updatedUser.modifiedCount === 0) {
+            return res.status(200).send("No changes were made to the user data");
+        }
+
+        res.status(200).send("User updated successfully");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Failed to update user");
+    }
+});
+
 // for deleting the data from the server
 app.delete("/usersdelete",async(req,res)=>{
     try{
