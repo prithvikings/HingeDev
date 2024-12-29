@@ -7,6 +7,7 @@ const User=require('./models/user');
 app.use(express.json());
 
 
+// for send the data to the server
 app.post("/signup",async (req,res)=>{
     // Create a new user isntance 
     const user=new User(req.body);
@@ -23,6 +24,7 @@ app.post("/signup",async (req,res)=>{
     
 });
 
+// for fetching the data from the server
 app.get("/users", async(req,res)=>{
     try{
         const userEmail=req.body.email;
@@ -38,10 +40,34 @@ app.get("/users", async(req,res)=>{
     }
 })
 
+// for deleting the data from the server
+app.delete("/usersdelete",async(req,res)=>{
+    try{
+        const firstName=req.body.firstName;
+        const deletedUser=await User.deleteOne({firstName:firstName});
+        res.send("User deleted successfully");
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).send("Failed to delete user");
+    }
+})
 
 connectdb()
 .then(()=>{
     console.log("connected to database");
+    // Catch-all for 404 errors (page not found)
+    app.use((req, res) => {
+        res.status(404).send('Page not found. Sorry!');
+    });
+
+    // General error handler (500 internal server errors)
+    app.use((err, req, res, next) => {
+        console.error(err.stack);
+        res.status(500).send("Something went wrong");
+    });
+
+
     app.listen(port,()=>{
         console.log(`Server is running on port ${port}`);
     });
