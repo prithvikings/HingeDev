@@ -4,17 +4,12 @@ const {connectdb} =require('./config/database');
 const port=3000;
 const User=require('./models/user');
 
+app.use(express.json());
+
+
 app.post("/signup",async (req,res)=>{
-    const userObj={
-        firstName:"Prithvi",
-        lastName:"Raj",
-        email:"prithvi07raj07@gmail.com",
-        password:"1234567890",
-        age:18,
-        gender:"Male"
-    }
     // Create a new user isntance 
-    const user=new User(userObj);
+    const user=new User(req.body);
 
     try{
         // Save the user instance to the database
@@ -27,8 +22,6 @@ app.post("/signup",async (req,res)=>{
     }
     
 });
-
-
 
 connectdb()
 .then(()=>{
