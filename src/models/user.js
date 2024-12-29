@@ -20,13 +20,23 @@ const userSchema= new Schema({
         trim:true,
         lowercase:true,
         unique:true,
+        validate(value){
+            if(!validate.isEmail(value)){
+                throw new Error('Email is invalid');
+            }
+        }
     },
     password:{
         type:String,
         required:true,
         trim:true,
-        lowercase:true
-    },
+        lowercase:true,
+        validate(value){
+            if(!validate.isStrongPassword(value)){
+                throw new Error('Password is weak');
+        }
+    }
+},
     age:{
         type:Number,
         required:true,
