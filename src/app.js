@@ -24,7 +24,7 @@ app.post("/signup",async (req,res)=>{
     
 });
 
-// for fetching the data from the server
+// for fetching the data from the server of selected user
 app.get("/users", async(req,res)=>{
     try{
         const userEmail=req.body.email;
@@ -35,6 +35,22 @@ app.get("/users", async(req,res)=>{
             res.send(users);
         }
     }catch(err){
+        console.log(err);
+        res.status(400).send("Failed to fetch users");
+    }
+})
+
+//for fetching all the data from the server
+app.get("/feed",async(req,res)=>{
+    try{
+        const users=await User.find({});
+        if(users.length==0){
+            res.send("No user found");
+            }else{
+                res.send(users);
+            }
+    }
+    catch(err){
         console.log(err);
         res.status(400).send("Failed to fetch users");
     }
