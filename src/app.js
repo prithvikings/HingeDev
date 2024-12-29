@@ -58,6 +58,11 @@ app.get("/feed",async(req,res)=>{
 
 //for updating the data from the server
 app.patch("/usersupdate", async (req, res) => {
+    const allowedUpdates=["password","about","skills","email"];
+    const isValidUpdate=Object.keys(req.body).every((k)=>allowedUpdates.includes(k));
+    if(!isValidUpdate){
+        return res.status(400).send("Invalid update operation");
+    }else{
     try {
         const userEmail = req.body.email;
         
@@ -83,8 +88,9 @@ app.patch("/usersupdate", async (req, res) => {
         }
         res.status(200).send("User updated successfully"+updatedUser.acknowledged);
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Failed to update user" +err.message);
+            console.error(err);
+            res.status(500).send("Failed to update user" +err.message);
+        }
     }
 });
 
