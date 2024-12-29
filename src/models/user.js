@@ -18,6 +18,7 @@ const userSchema= new Schema({
         required:true,
         trim:true,
         lowercase:true,
+        unique:true,
     },
     password:{
         type:String,
@@ -28,13 +29,35 @@ const userSchema= new Schema({
     age:{
         type:Number,
         required:true,
+        min:18,
+        max:65
     },
     gender:{
         type:String,
         required:true,
         trim:true,
         lowercase:true,
+        validate(value){
+            if(value!=='male'&&value!=='female'){
+                throw new Error('Gender must be male or female');
+            }else{
+                return true;
+            }
+        }
     },
+    photourl:{
+        type:String
+    },
+    about:{
+        type:String,
+        default:"This is a user"
+    },
+    skills:{
+        type:[String]
+    }
+},
+{
+    timestamps:true
 });
 
 module.exports=mongoose.model('User',userSchema);

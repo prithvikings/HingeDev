@@ -68,7 +68,8 @@ app.patch("/usersupdate", async (req, res) => {
         // Update user data
         const updatedUser = await User.updateOne(
             { email: userEmail },
-            { $set: req.body }
+            { $set: req.body },
+            { runValidators: true }
         );
 
         // Check if a user was matched
@@ -80,11 +81,10 @@ app.patch("/usersupdate", async (req, res) => {
         if (updatedUser.modifiedCount === 0) {
             return res.status(200).send("No changes were made to the user data");
         }
-
-        res.status(200).send("User updated successfully");
+        res.status(200).send("User updated successfully"+updatedUser.acknowledged);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Failed to update user");
+        res.status(500).send("Failed to update user" +err.message);
     }
 });
 
