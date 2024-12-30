@@ -1,28 +1,73 @@
 const express=require('express');
 const app=express();
 const {connectdb} =require('./config/database');
-const port=3000;
+const port = 3000 || 3001;
+const servershutdown=require('./utils/servershutdown');
 const User=require('./models/user');
-
+const validateSignUpData=require('./utils/validation');
+const bcrypt=require('bcrypt');
 app.use(express.json());
 
 
 // for send the data to the server
 app.post("/signup",async (req,res)=>{
-    // Create a new user isntance 
-    const user=new User(req.body);
-
     try{
+    // Before creating new user instance, do proper validation
+    validateSignUpData(req);
+
+    // Encrypt the password before saving it to the database
+    const {gender,age,firstName,lastName,email,password,about,skills}=req.body;
+    const passwordHash=await bcrypt.hash(password,8);
+    // Create a new user isntance 
+    const user=new User({
+        firstName,
+        lastName,
+        email,
+        password:passwordHash,
+        about,
+        skills,
+        gender,
+        age
+    });
+
         // Save the user instance to the database
         await user.save();
         res.send("User created successfully");
     }
+
     catch(err){
         console.log(err);
-        res.status(400).send("User creation failed");
+        res.status(400).send("Error creating user"+err.message);
     }
     
 });
+
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        // Check if user exists
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        // Compare the provided password with the hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Entered Password:", password);
+        console.log("Stored Password Hash:", user.password);
+        console.log("Password Match Result:", isMatch);
+    
+        if (isMatch) {
+            res.send("User logged in successfully");
+        } else {
+            res.status(400).send("Invalid credentials");
+        }
+    } catch (err) {
+        console.error("Error during login:", err);
+        res.status(500).send("Error logging in user");
+    }
+});
+
+
 
 // for fetching the data from the server of selected user
 app.get("/users", async(req,res)=>{
@@ -125,11 +170,12 @@ connectdb()
         console.error(err.stack);
         res.status(500).send("Something went wrong");
     });
+    const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
-
-    app.listen(port,()=>{
-        console.log(`Server is running on port ${port}`);
-    });
+// // Handle clean server shutdown
+// servershutdown(server);
 })
 .catch(err=>{
     console.log(err);
