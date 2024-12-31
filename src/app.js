@@ -67,8 +67,6 @@ app.post("/login", async (req, res) => {
     }
 });
 
-
-
 // for fetching the data from the server of selected user
 app.get("/users", async(req,res)=>{
     try{
@@ -172,6 +170,7 @@ connectdb()
     });
     const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+    servershutdown(server);
 });
 
 // // Handle clean server shutdown
