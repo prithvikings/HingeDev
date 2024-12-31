@@ -34,6 +34,7 @@ app.post("/signup",async (req,res)=>{
         age
     });
 
+
         // Save the user instance to the database
         await user.save();
         res.send("User created successfully");
@@ -61,11 +62,17 @@ app.post("/login", async (req, res) => {
         }
         // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Entered Password:", password);
-        console.log("Stored Password Hash:", user.password);
-        console.log("Password Match Result:", isMatch);
+        // console.log("Entered Password:", password);
+        // console.log("Stored Password Hash:", user.password);
+        // console.log("Password Match Result:", isMatch);
     
         if (isMatch) {
+
+            // Generate a JWT token
+            const token = jwt.sign({ email: user.email },"secretkey", { expiresIn: "1h" });
+            // Add the token to cookie and send the response back to the user
+            res.cookie("token", token);
+
             res.send("User logged in successfully");
         } else {
             res.status(400).send("Invalid credentials");
@@ -76,6 +83,22 @@ app.post("/login", async (req, res) => {
     }
 
 });
+
+// for using cookie to authenticate the user for profile page
+app.get("/profile",async(req,res)=>{
+    try{
+        const token=req.cookies.token;
+        if(!token){
+            return res.status(401).send("Unauthorized access");
+        }
+        const decode=jwt.verify(token,"secretkey");
+        const user=await User.findOne({email:decode.email});
+        res.send("Welcome " +user.firstName+" "+user.lastName);
+    }catch(err){
+        console.log(err);
+        res.status(400).send("Failed to fetch user");
+    }
+})
 
 // for fetching the data from the server of selected user
 app.get("/users", async(req,res)=>{
