@@ -6,7 +6,11 @@ const servershutdown=require('./utils/servershutdown');
 const User=require('./models/user');
 const validateSignUpData=require('./utils/validation');
 const bcrypt=require('bcrypt');
+const cookieParser=require('cookie-parser');
+const jwt=require('jsonwebtoken');
+
 app.use(express.json());
+app.use(cookieParser())
 
 
 // for send the data to the server
@@ -44,7 +48,12 @@ app.post("/signup",async (req,res)=>{
 
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
+
     try {
+        // Check if email and password are provided
+        if (!email || !password) {
+            return res.status(400).send("Email and password are required");
+        }
         // Check if user exists
         const user = await User.findOne({ email: email });
         if (!user) {
@@ -65,6 +74,7 @@ app.post("/login", async (req, res) => {
         console.error("Error during login:", err);
         res.status(500).send("Error logging in user");
     }
+
 });
 
 // for fetching the data from the server of selected user
