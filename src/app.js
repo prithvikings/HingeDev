@@ -8,6 +8,7 @@ const validateSignUpData=require('./utils/validation');
 const bcrypt=require('bcrypt');
 const cookieParser=require('cookie-parser');
 const jwt=require('jsonwebtoken');
+const {authenticate}=require('./middleware/auth');
 
 app.use(express.json());
 app.use(cookieParser())
@@ -33,7 +34,6 @@ app.post("/signup",async (req,res)=>{
         gender,
         age
     });
-
 
         // Save the user instance to the database
         await user.save();
@@ -85,15 +85,9 @@ app.post("/login", async (req, res) => {
 });
 
 // for using cookie to authenticate the user for profile page
-app.get("/profile",async(req,res)=>{
+app.get("/profile",authenticate,async(req,res)=>{
     try{
-        const token=req.cookies.token;
-        if(!token){
-            return res.status(401).send("Unauthorized access");
-        }
-        const decode=jwt.verify(token,"secretkey");
-        const user=await User.findOne({email:decode.email});
-        res.send("Welcome " +user.firstName+" "+user.lastName);
+        res.send("Welcome to the profile page" + req.user.firstName);
     }catch(err){
         console.log(err);
         res.status(400).send("Failed to fetch user");
