@@ -12,4 +12,16 @@ const validateSignUpData=(req)=>{
         return true;
     }
 }
-module.exports=validateSignUpData;
+
+const validateProfileData=(req)=>{
+    const allowedEditFields=['firstName','lastName','password','about','skills'];
+    const isallowedEditFields=Object.keys(req.body).every(field=>
+        allowedEditFields.includes(field))
+    if(!isallowedEditFields){
+        throw new Error("Invalid fields to update");
+    }else{
+        return true;
+    }
+};
+
+module.exports=validateSignUpData,validateProfileData;
