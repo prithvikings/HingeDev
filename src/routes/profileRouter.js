@@ -26,7 +26,10 @@ profileRouter.patch("/profile/edit",authenticate,async(req,res)=>{
                 }
             });
             await loggedinuser.save();
-            res.send("User profile updated successfully");
+            res.json({
+                message:`${loggedinuser.firstName}, Profile updated successfully`,
+                user:loggedinuser
+            })
         }
     }
     catch(err){
@@ -34,5 +37,26 @@ profileRouter.patch("/profile/edit",authenticate,async(req,res)=>{
         res.status(400).send("Failed to update user profile");
     }
 }); // for updating the user profile
+
+//if we forgot the password
+profileRouter.post("/profile/forgotpassword",async(req,res)=>{
+    try{
+        const {email}=req.body;
+        const user=await User
+        .findOne({email});
+        if(!user){
+            throw new Error("User not found");
+        }
+        const token=await user.generateAuthToken();
+        await user.save();
+        res.json({
+            message:"Password reset link sent to your email",
+            token
+        });
+    }catch(err){
+        console.log(err);
+        res.status(400).send("Failed to send password reset link");
+    }
+}); 
 
 module.exports = profileRouter;
