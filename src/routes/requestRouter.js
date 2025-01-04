@@ -51,9 +51,6 @@ requestRouter.post("/request/send/:status/:touserId",
                 });
             }
 
-
-            
-
             // Create a new connection request
             const connectionRequest = new ConnectionRequestModel({
                 fromUserId: fromUser,
