@@ -42,13 +42,17 @@ const userSchema= new Schema({
         required:true,
         trim:true,
         lowercase:true,
-        validate(value){
-            if(value!=='male'&&value!=='female'){
-                throw new Error('Gender must be male or female');
-            }else{
-                return true;
-            }
+        enum:{
+            values:['male','female','other'],
+            message:'{VALUE} is not a gender type'
         }
+        // validate(value){
+        //     if(value!=='male'&&value!=='female'){
+        //         throw new Error('Gender must be male or female');
+        //     }else{
+        //         return true;
+        //     }
+        // }
     },
     photourl:{
         type:String

@@ -1,7 +1,7 @@
 const express=require('express');
 const app=express();
 const {connectdb} =require('./config/database');
-const port = 3000 || 3001;
+const port = 3000 || 3001 || 3002;
 const servershutdown=require('./utils/servershutdown');
 const cookieParser=require('cookie-parser');
 const authRouter=require('./routes/authRoute');
