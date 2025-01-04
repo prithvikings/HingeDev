@@ -13,7 +13,7 @@ const connectionRequestSchema = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['pending','accepted','rejected','intrested'],
+        enum:['ignored','accepted','rejected','intrested'],
         message:"{VALUE} is not supported"
     }
 },{
