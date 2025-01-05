@@ -3,6 +3,7 @@ const requestRouter = express.Router();
 const { authenticate } = require('../middleware/auth');
 const ConnectionRequestModel = require('../models/connectionRequest');
 const user = require('../models/user');
+const { Connection } = require('mongoose');
 
 requestRouter.post("/request/send/:status/:touserId",
     authenticate,
@@ -70,5 +71,42 @@ requestRouter.post("/request/send/:status/:touserId",
         }
     }
 );
+
+requestRouter.post("/request/review/:status/:requestid",authenticate,async(req,res)=>{
+    try{
+        //validate the status is status is interested or not if it is not interested then we will not consider it
+        //dhoni=>alia
+        //alia can only accept dhoni request (loggedInUser == toUserId)
+        //it will only show this whenever it is intrested (Status always be interested)
+        //request id should be valid
+
+        const loggedInUser=req.user;
+        const {status,requestid}=req.params;
+
+        //validating status
+        const allowedStatus=["accepted","rejected"];
+        if(!allowedStatus.includes(status)){
+            return res.status(400).json({message:"Satus not allowed"});
+        }
+
+        const connectionRequest=await ConnectionRequestModel.findOne({
+            _id:requestid,
+            status:"interested",
+            toUserId:loggedInUser._id
+        })
+        if(!connectionRequest){
+            return res
+            .status(404)
+            .json({message:"Connection request not found"})
+        }
+
+        connectionRequest.status=status;
+        const data=await connectionRequest.save();
+        res.json({message:"connection request "+status, data:data});
+    }catch(err){
+
+        console.log(err);
+    }
+})
 
 module.exports = requestRouter;
