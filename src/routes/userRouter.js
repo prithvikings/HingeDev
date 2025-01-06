@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const {authenticate} = require('../middleware/auth');
 const ConnectionRequestModel = require('../models/connectionRequest');
+const User = require('../models/user');
 
 
 
@@ -48,5 +49,56 @@ userRouter.get("/user/requests/connection", authenticate,async (req, res) => {
         return res.status(400).send({ error: error.message });
     }
 });
+
+
+
+
+userRouter.get("/feed", authenticate, async (req, res) => {
+    /**
+         * GET /feed
+         * This route fetches all user cards for the logged-in user except:
+         * 1. The user's own card.
+         * 2. Users they are already connected with.
+         * 3. Users they have ignored.
+         * 4. Users to whom they have already sent a connection request.
+         * 
+         * Example:
+         * - Rahul is the logged-in user.
+         * - Rahul's connections: A, B, C
+         * - Ignored users: D, E
+         * - Pending requests sent by Rahul: F
+         * 
+         * Expected Output:
+         * - All user cards except A, B, C, D, E, F, and Rahul himself.
+    */
+    try {
+        const loggedinUser = req.user;
+        const connectionRequest=await ConnectionRequestModel.find({
+            $or:[
+                {fromUserId:loggedinUser._id},
+                {toUserId:loggedinUser._id}
+            ],
+        }).select('fromUserId toUserId');
+            const hideUsersFromFeed=new Set();
+            connectionRequest.forEach((req) => {
+                hideUsersFromFeed.add(req.fromUserId);
+                hideUsersFromFeed.add(req.toUserId);
+            });
+            const users=await User.find({
+                $and:[
+                    {_id:{$nin:Array.from(hideUsersFromFeed)}},
+                    {_id:{$ne:loggedinUser._id}}
+                ]
+            })
+            res.json(users);
+    } catch (error) {
+        console.error("Error in fetching user feed:", error.message);
+        res.status(500).json({ 
+            error: "Failed to fetch user feed", 
+            details: error.message 
+        });
+    }
+});
+
 
 module.exports = userRouter;
