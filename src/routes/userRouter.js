@@ -51,8 +51,7 @@ userRouter.get("/user/requests/connection", authenticate,async (req, res) => {
 });
 
 
-
-
+//get all the ignored requests connection request for the loggedin user 
 userRouter.get("/feed", authenticate, async (req, res) => {
     /**
          * GET /feed
@@ -73,6 +72,9 @@ userRouter.get("/feed", authenticate, async (req, res) => {
     */
     try {
         const loggedinUser = req.user;
+        // const page = parseInt(req.query.page) || 1;
+        // const limit = parseInt(req.query.limit) || 10;
+        // const skip = (page - 1) * limit;
         const connectionRequest=await ConnectionRequestModel.find({
             $or:[
                 {fromUserId:loggedinUser._id},
@@ -88,8 +90,8 @@ userRouter.get("/feed", authenticate, async (req, res) => {
                 $and:[
                     {_id:{$nin:Array.from(hideUsersFromFeed)}},
                     {_id:{$ne:loggedinUser._id}}
-                ]
-            })
+                ]})
+            // }).skip(skip).limit(limit);
             res.json(users);
     } catch (error) {
         console.error("Error in fetching user feed:", error.message);
