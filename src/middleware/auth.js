@@ -7,7 +7,7 @@ const authenticate = async (req, res,next) => {
     try {
         const token = req.cookies.token;
         if (!token) {
-            return res.status(401).send("Unauthorized access");
+            return res.status(401).send("Unauthorized access Please login first");
         }
         const decode = jwt.verify(token, "secretkey"); //this is decoded token
         const user = await User.findOne({ email: decode.email });//this is the user who is logged in

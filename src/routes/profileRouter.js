@@ -6,7 +6,7 @@ const validateProfileData=require('../utils/validation');
 // for using cookie to authenticate the user for profile page
 profileRouter.get("/profile/view",authenticate,async(req,res)=>{
     try{
-        res.send("Welcome to the profile page" + req.user.firstName);
+        res.send(req.user);
     }catch(err){
         console.log(err);
         res.status(400).send("Failed to fetch user");
