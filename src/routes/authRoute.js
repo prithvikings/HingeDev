@@ -12,7 +12,7 @@ authRouter.post("/signup",async (req,res)=>{
     validateSignUpData(req);
 
     // Encrypt the password before saving it to the database
-    const {gender,age,firstName,lastName,email,password,about,skills}=req.body;
+    const {gender,age,firstName,lastName,email,password,about,skills,photourl}=req.body;
     const passwordHash=await bcrypt.hash(password,8);
     // Create a new user isntance 
     const user=new User({
@@ -23,7 +23,8 @@ authRouter.post("/signup",async (req,res)=>{
         about,
         skills,
         gender,
-        age
+        age,
+        photourl
     });
 
         // Save the user instance to the database
@@ -65,7 +66,7 @@ authRouter.post("/login", async (req, res) => {
             // Add the token to cookie and send the response back to the user
             res.cookie("token", token);
 
-            res.send("User logged in successfully");
+            res.send(user);
         } else {
             res.status(400).send("Invalid credentials");
         }
