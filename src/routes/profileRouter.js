@@ -1,7 +1,7 @@
 const express = require('express');
 const profileRouter = express.Router();
 const {authenticate}=require('../middleware/auth');
-const validateProfileData=require('../utils/validation');
+const {validateProfileData}=require('../utils/validation');
 
 // for using cookie to authenticate the user for profile page
 profileRouter.get("/profile/view",authenticate,async(req,res)=>{
@@ -18,7 +18,7 @@ profileRouter.patch("/profile/edit",authenticate,async(req,res)=>{
         if(!validateProfileData(req)){
             throw new Error("Invalid fields to update");
         }else{
-            const allowedEditFields=['firstName','lastName','password','about','skills'];
+            const allowedEditFields=['firstName','lastName','password','about','skills','photourl','gender','age'];
             const loggedinuser=req.user;
             allowedEditFields.forEach(field=>{
                 if(req.body[field]){
