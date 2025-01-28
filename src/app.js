@@ -8,7 +8,9 @@ const authRouter=require('./routes/authRoute');
 const requestRouter=require('./routes/requestRouter');
 const profileRouter=require('./routes/profileRouter');
 const userRouter=require('./routes/userRouter');
+const cors=require('cors');
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 

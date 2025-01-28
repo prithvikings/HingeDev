@@ -81,7 +81,7 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", async (req, res) => {
     // res.clearCookie("token"); //we can use this line or the below line
     res.cookie("token",null,{
-        expires: new Data(Date.now()),
+        expires: new Date(Date.now()),
     }); 
     res.send("User logged out successfully");
 });
