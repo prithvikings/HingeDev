@@ -37,21 +37,25 @@ userRouter.get("/user/requests/sent", authenticate,async (req, res) => {
 //get all the accepted requests connection request for the loggedin user
 userRouter.get("/user/requests/connection", authenticate, async (req, res) => {
     try {
-        const loggedinUser = req.user;
+        const loggedinUser = req.user; // Get the logged-in user
         const connectionRequests = await ConnectionRequestModel.find({
             $or: [
-                { fromUserId: loggedinUser._id, status: "accepted" },
-                { toUserId: loggedinUser._id, status: "accepted" }
+                { fromUserId: loggedinUser._id, status: { $in: ["accepted", "interested"] } },
+                { toUserId: loggedinUser._id, status: { $in: ["accepted", "interested"] } }
             ]
         })
-        .populate('fromUserId', ['firstName', 'lastName', 'email', 'photoUrl', 'age', 'gender', 'about'])
-        .populate('toUserId', ['firstName', 'lastName', 'email', 'photoUrl', 'age', 'gender', 'about']);
+        .populate('fromUserId', ['firstName', 'lastName', 'photoUrl', 'age', 'gender', 'about']) // Populate fromUserId
+        .populate('toUserId', ['firstName', 'lastName', 'photoUrl', 'age', 'gender', 'about']); // Populate toUserId
 
-        res.json(connectionRequests);
+        console.log("Connection Requests from DB:", connectionRequests); // Log fetched data
+        res.json(connectionRequests); // Send data to frontend
     } catch (error) {
         return res.status(400).send({ error: error.message });
     }
 });
+
+
+
 
 
 
