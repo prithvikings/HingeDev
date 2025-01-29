@@ -35,20 +35,24 @@ userRouter.get("/user/requests/sent", authenticate,async (req, res) => {
 })
 
 //get all the accepted requests connection request for the loggedin user
-userRouter.get("/user/requests/connection", authenticate,async (req, res) => {
+userRouter.get("/user/requests/connection", authenticate, async (req, res) => {
     try {
         const loggedinUser = req.user;
         const connectionRequests = await ConnectionRequestModel.find({
-            $or:[
-                {fromUserId:loggedinUser._id,status:"accepted"},
-                {toUserId:loggedinUser._id,status:"accepted"}
+            $or: [
+                { fromUserId: loggedinUser._id, status: "accepted" },
+                { toUserId: loggedinUser._id, status: "accepted" }
             ]
-        }).populate('fromUserId',['firstName','lastName','email']);
+        })
+        .populate('fromUserId', ['firstName', 'lastName', 'email', 'photoUrl', 'age', 'gender', 'about'])
+        .populate('toUserId', ['firstName', 'lastName', 'email', 'photoUrl', 'age', 'gender', 'about']);
+
         res.json(connectionRequests);
     } catch (error) {
         return res.status(400).send({ error: error.message });
     }
 });
+
 
 
 //get all the ignored requests connection request for the loggedin user 
